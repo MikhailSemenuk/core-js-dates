@@ -106,8 +106,11 @@ function getCountDaysInMonth(month, year) {
  * '2024-02-01T00:00:00.000Z', '2024-02-02T00:00:00.000Z'  => 2
  * '2024-02-01T00:00:00.000Z', '2024-02-12T00:00:00.000Z'  => 12
  */
-function getCountDaysOnPeriod(/* dateStart, dateEnd */) {
-  throw new Error('Not implemented');
+function getCountDaysOnPeriod(dateStart, dateEnd) {
+  const date1 = new Date(dateStart);
+  const date2 = new Date(dateEnd);
+
+  return Math.round((date2 - date1) / (1000 * 3600 * 24)) + 1;
 }
 
 /**
@@ -127,8 +130,8 @@ function getCountDaysOnPeriod(/* dateStart, dateEnd */) {
  * '2024-02-02', { start: '2024-02-02', end: '2024-03-02' } => true
  * '2024-02-10', { start: '2024-02-02', end: '2024-03-02' } => true
  */
-function isDateInPeriod(/* date, period */) {
-  throw new Error('Not implemented');
+function isDateInPeriod(date, period) {
+  return date >= period.start && date <= period.end;
 }
 
 /**
@@ -142,8 +145,12 @@ function isDateInPeriod(/* date, period */) {
  * '1999-01-05T02:20:00.000Z' => '1/5/1999, 2:20:00 AM'
  * '2010-12-15T22:59:00.000Z' => '12/15/2010, 10:59:00 PM'
  */
-function formatDate(/* date */) {
-  throw new Error('Not implemented');
+function formatDate(date) {
+  const dateObj = new Date(date);
+  const localTimezoneOffsetHour = dateObj.getTimezoneOffset() / 60;
+
+  dateObj.setHours(dateObj.getHours() + localTimezoneOffsetHour);
+  return dateObj.toLocaleString('en');
 }
 
 /**
@@ -158,8 +165,23 @@ function formatDate(/* date */) {
  * 12, 2023 => 10
  * 1, 2024 => 8
  */
-function getCountWeekendsInMonth(/* month, year */) {
-  throw new Error('Not implemented');
+function getCountWeekendsInMonth(month, year) {
+  const date1 = new Date(year, month - 1);
+
+  const date2 = new Date(date1);
+  date2.setMonth(date2.getMonth() + 1);
+
+  let answer = 0;
+  for (
+    let currentDay = new Date(date1);
+    currentDay < date2;
+    currentDay.setDate(currentDay.getDate() + 1)
+  ) {
+    if (currentDay.getDay() === 0 || currentDay.getDay() === 6) {
+      answer += 1;
+    }
+  }
+  return answer;
 }
 
 /**
@@ -173,8 +195,10 @@ function getCountWeekendsInMonth(/* month, year */) {
  * Date(2024, 0, 31) => 5
  * Date(2024, 1, 23) => 8
  */
-function getWeekNumberByDate(/* date */) {
-  throw new Error('Not implemented');
+function getWeekNumberByDate(date) {
+  const startYear = new Date(date.getFullYear(), 0, 1);
+  const daysBetween = Math.round((date - startYear) / (1000 * 3600 * 24)) + 1;
+  return Math.floor((daysBetween + startYear.getDay() - 1) / 7) + 1;
 }
 
 /**
